@@ -22,84 +22,92 @@ client.connect(err => {
   const adminCollection = client.db("travally").collection("admin");
   app.post('/admin', (req, res) => {
     adminCollection.insertOne(req.body)
-    .then(result => console.log(result)) 
-    .catch(err => console.log(err))
+      .then(result => console.log(result))
+      .catch(err => console.log(err))
+  })
+
+  app.post('/isDoctor', (req, res) => {
+    const email = req.body.email;
+    adminCollection.find({ email: email })
+      .toArray((err, doctors) => {
+        res.send(doctors.length > 0);
+      })
   })
 
 
   const collection = client.db("travally").collection("services");
   app.post('/addservice', (req, res) => {
     collection.insertOne(req.body)
-    .then(result => console.log(result)) 
-    .catch(err => console.log(err))
+      .then(result => console.log(result))
+      .catch(err => console.log(err))
   })
 
   app.get('/book/:id', (req, res) => {
-    collection.find({_id: ObjectId(req.params.id)})
-    .toArray((err, documents) => {
-      res.send(documents)
-    })
+    collection.find({ _id: ObjectId(req.params.id) })
+      .toArray((err, documents) => {
+        res.send(documents)
+      })
   })
 
-  app.delete('/delete/:id', (req, res) =>{
-    collection.deleteOne({_id: ObjectId(req.params.id)})
-    .then( result => {
-      console.log(result);
-    })
+  app.delete('/delete/:id', (req, res) => {
+    collection.deleteOne({ _id: ObjectId(req.params.id) })
+      .then(result => {
+        console.log(result);
+      })
   })
 
   app.get('/services', (req, res) => {
     collection.find({})
-    .toArray((err, docs) => {
-      res.send(docs)
-    })
+      .toArray((err, docs) => {
+        res.send(docs)
+      })
   })
-  
+
   const reviewcollection = client.db("travally").collection("reviews");
   app.post('/addreview', (req, res) => {
     reviewcollection.insertOne(req.body)
-    .then(result => console.log(result)) 
-    .catch(err => console.log(err))
+      .then(result => console.log(result))
+      .catch(err => console.log(err))
   })
-  
+
   app.get('/testimonials', (req, res) => {
     reviewcollection.find({})
-    .toArray((err, docs) => {
-      res.send(docs)
-    })
+      .toArray((err, docs) => {
+        res.send(docs)
+      })
   })
-  
+
   const orderCollection = client.db("travally").collection("orders");
   app.post('/placeorder', (req, res) => {
     orderCollection.insertOne(req.body)
-    .then(result => console.log(result)) 
-    .catch(err => console.log(err))
+      .then(result => console.log(result))
+      .catch(err => console.log(err))
   })
 
   app.get('/orders/:email', (req, res) => {
-    orderCollection.find({email: req.params.email})
-    .toArray((err, items) => {
+    orderCollection.find({ email: req.params.email })
+      .toArray((err, items) => {
         res.send(items)
-    })
+      })
   })
 
   app.get('/orders', (req, res) => {
     orderCollection.find({})
-    .toArray((err, items) => {
+      .toArray((err, items) => {
         res.send(items)
-    })
+      })
   })
-  
+
   app.patch('/update/:serviceId', (req, res) => {
     console.log(req.body.status, req.params.serviceId);
-    orderCollection.updateOne({_id: ObjectId(req.params.serviceId)},
-    {
-      $set: {status: req.body.status}
-    })
-    .then (result => {
-      res.send(result.modifiedCount > 0)
-      console.log(result);
-    })
+    orderCollection.updateOne({ _id: ObjectId(req.params.serviceId) },
+      {
+        $set: { status: req.body.status }
+      })
+      .then(result => {
+        res.send(result.modifiedCount > 0)
+        console.log(result);
+      })
   })
 });
 
