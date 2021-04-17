@@ -41,6 +41,13 @@ client.connect(err => {
     })
   })
 
+  app.delete('/delete/:id', (req, res) =>{
+    collection.deleteOne({_id: ObjectId(req.params.id)})
+    .then( result => {
+      console.log(result);
+    })
+  })
+
   app.get('/services', (req, res) => {
     collection.find({})
     .toArray((err, docs) => {
@@ -76,14 +83,24 @@ client.connect(err => {
     })
   })
 
-  app.get('/orders/', (req, res) => {
+  app.get('/orders', (req, res) => {
     orderCollection.find({})
     .toArray((err, items) => {
         res.send(items)
     })
   })
   
-  
+  app.patch('/update/:serviceId', (req, res) => {
+    console.log(req.body.status, req.params.serviceId);
+    orderCollection.updateOne({_id: ObjectId(req.params.serviceId)},
+    {
+      $set: {status: req.body.status}
+    })
+    .then (result => {
+      res.send(result.modifiedCount > 0)
+      console.log(result);
+    })
+  })
 });
 
 app.listen(port)
