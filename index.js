@@ -26,11 +26,11 @@ client.connect(err => {
       .catch(err => console.log(err))
   })
 
-  app.post('/isDoctor', (req, res) => {
+  app.post('/isAdmin', (req, res) => {
     const email = req.body.email;
     adminCollection.find({ email: email })
-      .toArray((err, doctors) => {
-        res.send(doctors.length > 0);
+      .toArray((err, admin) => {
+        res.send(admin.length > 0);
       })
   })
 
